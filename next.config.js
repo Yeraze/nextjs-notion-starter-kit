@@ -12,6 +12,7 @@ module.exports = withBundleAnalyzer({
       'images.unsplash.com',
       'pbs.twimg.com',
       'abs.twimg.com',
+      'file.notion.so',
       's3.us-west-2.amazonaws.com',
       'redis-17396.c17.us-east-1-4.ec2.cloud.redislabs.com:17396',
       'transitivebullsh.it'
