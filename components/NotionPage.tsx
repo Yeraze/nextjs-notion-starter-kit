@@ -1,4 +1,5 @@
 import cs from 'classnames'
+import { DiscussionEmbed } from 'disqus-react';
 import dynamic from 'next/dynamic'
 import Image from 'next/legacy/image'
 import Link from 'next/link'
@@ -29,8 +30,6 @@ import { Page404 } from './Page404'
 import { PageAside } from './PageAside'
 import { PageHead } from './PageHead'
 import styles from './styles.module.css'
-
-import { DiscussionEmbed } from 'disqus-react';
 
 
 // -----------------------------------------------------------------------------
@@ -295,8 +294,8 @@ export function NotionPage({
   const disqus =<DiscussionEmbed
     shortname={config.disqusShortname}
     config={ {
-      url: (canonicalPageUrl ? canonicalPageUrl : ""),
-      title: title
+      url: canonicalPageUrl || "",
+      title
     } }
   />
 

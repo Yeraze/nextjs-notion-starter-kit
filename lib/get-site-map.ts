@@ -1,8 +1,8 @@
 import { getAllPagesInSpace, getPageProperty, uuidToId } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
+import type * as types from './types'
 import * as config from './config'
-import * as types from './types'
 import { includeNotionIdInUrls } from './config'
 import { getCanonicalPageId } from './get-canonical-page-id'
 import { notion } from './notion-api'

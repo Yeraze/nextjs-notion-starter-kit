@@ -18,18 +18,16 @@ import * as Fathom from 'fathom-client'
 import { useRouter } from 'next/router'
 import { posthog } from 'posthog-js'
 import * as React from 'react'
-
 import ReactGA from 'react-ga4'
 
 import { bootstrap } from '@/lib/bootstrap-client'
 import {
   fathomConfig,
   fathomId,
+  googleAnalyticsId,
   isServer,
   posthogConfig,
-  posthogId,
-  googleAnalyticsId
-} from '@/lib/config'
+  posthogId} from '@/lib/config'
 
 if (!isServer) {
   bootstrap()
