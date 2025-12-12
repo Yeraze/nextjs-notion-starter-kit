@@ -1,19 +1,22 @@
-import * as React from 'react'
+import cs from 'classnames'
 import dynamic from 'next/dynamic'
-import Image from 'next/image'
+import Image from 'next/legacy/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-
-import cs from 'classnames'
-import { PageBlock } from 'notion-types'
+import { type PageBlock } from 'notion-types'
 import { formatDate, getBlockTitle, getPageProperty } from 'notion-utils'
+import * as React from 'react'
 import BodyClassName from 'react-body-classname'
-import { NotionRenderer } from 'react-notion-x'
-import TweetEmbed from 'react-tweet-embed'
+import {
+  type NotionComponents,
+  NotionRenderer,
+  useNotionContext
+} from 'react-notion-x'
+import { EmbeddedTweet, TweetNotFound, TweetSkeleton } from 'react-tweet'
 import { useSearchParam } from 'react-use'
 
+import type * as types from '@/lib/types'
 import * as config from '@/lib/config'
-import * as types from '@/lib/types'
 import { mapImageUrl } from '@/lib/map-image-url'
 import { getCanonicalPageUrl, mapPageUrl } from '@/lib/map-page-url'
 import { searchNotion } from '@/lib/search-notion'
@@ -37,37 +40,68 @@ import { DiscussionEmbed } from 'disqus-react';
 const Code = dynamic(() =>
   import('react-notion-x/build/third-party/code').then(async (m) => {
     // add / remove any prism syntaxes here
-    await Promise.all([
+    await Promise.allSettled([
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-markup-templating.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-markup.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-bash.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-c.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-cpp.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-csharp.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-docker.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-java.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-js-templates.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-coffeescript.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-diff.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-git.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-go.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-graphql.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-handlebars.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-less.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-makefile.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-markdown.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-objectivec.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-ocaml.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-python.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-reason.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-rust.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-sass.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-scss.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-solidity.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-sql.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-stylus.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-swift.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-wasm.js'),
+      // @ts-expect-error Ignore prisma types
       import('prismjs/components/prism-yaml.js')
     ])
     return m.Code
@@ -100,12 +134,19 @@ const Modal = dynamic(
   }
 )
 
-const Tweet = ({ id }: { id: string }) => {
-  return <TweetEmbed tweetId={id} />
+function Tweet({ id }: { id: string }) {
+  const { recordMap } = useNotionContext()
+  const tweet = (recordMap as types.ExtendedTweetRecordMap)?.tweets?.[id]
+
+  return (
+    <React.Suspense fallback={<TweetSkeleton />}>
+      {tweet ? <EmbeddedTweet tweet={tweet} /> : <TweetNotFound />}
+    </React.Suspense>
+  )
 }
 
 const propertyLastEditedTimeValue = (
-  { block, pageHeader },
+  { block, pageHeader }: any,
   defaultFn: () => React.ReactNode
 ) => {
   if (pageHeader && block?.last_edited_time) {
@@ -118,7 +159,7 @@ const propertyLastEditedTimeValue = (
 }
 
 const propertyDateValue = (
-  { data, schema, pageHeader },
+  { data, schema, pageHeader }: any,
   defaultFn: () => React.ReactNode
 ) => {
   if (pageHeader && schema?.name?.toLowerCase() === 'published') {
@@ -135,7 +176,7 @@ const propertyDateValue = (
 }
 
 const propertyTextValue = (
-  { schema, pageHeader },
+  { schema, pageHeader }: any,
   defaultFn: () => React.ReactNode
 ) => {
   if (pageHeader && schema?.name?.toLowerCase() === 'author') {
@@ -145,18 +186,18 @@ const propertyTextValue = (
   return defaultFn()
 }
 
-export const NotionPage: React.FC<types.PageProps> = ({
+export function NotionPage({
   site,
   recordMap,
   error,
   pageId
-}) => {
+}: types.PageProps) {
   const router = useRouter()
   const lite = useSearchParam('lite')
 
-  const components = React.useMemo(
+  const components = React.useMemo<Partial<NotionComponents>>(
     () => ({
-      nextImage: Image,
+      nextLegacyImage: Image,
       nextLink: Link,
       Code,
       Collection,
@@ -182,11 +223,11 @@ export const NotionPage: React.FC<types.PageProps> = ({
     if (lite) params.lite = lite
 
     const searchParams = new URLSearchParams(params)
-    return mapPageUrl(site, recordMap, searchParams)
+    return site ? mapPageUrl(site, recordMap!, searchParams) : undefined
   }, [site, recordMap, lite])
 
   const keys = Object.keys(recordMap?.block || {})
-  const block = recordMap?.block?.[keys[0]]?.value
+  const block = recordMap?.block?.[keys[0]!]?.value
 
   // const isRootPage =
   //   parsePageId(block?.id) === parsePageId(site?.rootNotionPageId)
@@ -198,7 +239,11 @@ export const NotionPage: React.FC<types.PageProps> = ({
 
   const pageAside = React.useMemo(
     () => (
-      <PageAside block={block} recordMap={recordMap} isBlogPost={isBlogPost} />
+      <PageAside
+        block={block!}
+        recordMap={recordMap!}
+        isBlogPost={isBlogPost}
+      />
     ),
     [block, recordMap, isBlogPost]
   )
@@ -233,6 +278,10 @@ export const NotionPage: React.FC<types.PageProps> = ({
     g.block = block
   }
 
+  const canonicalPageUrl = config.isDev
+    ? undefined
+    : getCanonicalPageUrl(site, recordMap)(pageId)
+
   const socialImage = mapImageUrl(
     getPageProperty<string>('Social Image', block, recordMap) ||
       (block as PageBlock).format?.page_cover ||
@@ -263,6 +312,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
         description={socialDescription}
         image={socialImage}
         url={canonicalPageUrl}
+        isBlogPost={isBlogPost}
       />
 
       {isLiteMode && <BodyClassName className='notion-lite' />}
@@ -288,7 +338,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
         defaultPageCoverPosition={config.defaultPageCoverPosition}
         mapPageUrl={siteMapPageUrl}
         mapImageUrl={mapImageUrl}
-        searchNotion={config.isSearchEnabled ? searchNotion : null}
+        searchNotion={config.isSearchEnabled ? searchNotion : undefined}
         pageAside={pageAside}
         pageFooter={pageId === site.rootNotionPageId ? null : (config.disqusShortname ? disqus : null)}
         footer={footer}
