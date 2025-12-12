@@ -40,13 +40,11 @@ export default siteConfig({
 
   // map of notion page IDs to URL paths (optional)
   // any pages defined here will override their default URL paths
-  // example:
-  //
-  // pageUrlOverrides: {
-  //   '/foo': '067dd719a912471ea9a3ac10710e7fdf',
-  //   '/bar': '0be6efce9daf42688f65c76b89f8eb27'
-  // }
-  pageUrlOverrides: null,
+  pageUrlOverrides: {
+    '/about': '21c2452a42044fb3a82da2daa46ee4d4',
+    '/patents': '192b09bdb8fb42399ced70bcafb6a758',
+    '/publications': '2547e12d13924f26a69585f5822ecab2'
+  },
 
   googleAnalyticsId: 'G-XMZ2PCLR16',
 
