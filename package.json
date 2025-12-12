@@ -41,6 +41,7 @@
     "disqus-react": "^1.1.7",
     "expiry-map": "^2.0.0",
     "fathom-client": "^3.4.1",
+    "katex": "^0.16.27",
     "ky": "^1.8.1",
     "lqip-modern": "^2.2.1",
     "next": "^16.0.10",
