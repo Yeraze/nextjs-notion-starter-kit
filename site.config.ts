@@ -53,7 +53,6 @@ export default siteConfig({
   disqusShortname: 'yerazesdomain',
 
   // whether to use the default notion navigation style or a custom one with links to
-<<<<<<< HEAD
   // important pages
   // navigationStyle: 'default'
   navigationStyle: 'custom',
@@ -72,7 +71,6 @@ export default siteConfig({
     }
   ]
   // important pages. To use `navigationLinks`, set `navigationStyle` to `custom`.
-  navigationStyle: 'default'
   // navigationStyle: 'custom',
   // navigationLinks: [
   //   {

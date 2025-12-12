@@ -19,7 +19,7 @@ export interface SiteConfig {
   privacyPolicy?: string;
 
   googleAnalyticsId?: string | null
-  disqusShortname?: string | null
+  disqusShortname?: string
   mastodon?: string
 
   defaultPageIcon?: string | null

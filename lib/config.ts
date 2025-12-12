@@ -56,7 +56,6 @@ export const description: string = getSiteConfig('description', 'Notion Blog')
 export const language: string = getSiteConfig('language', 'en')
 
 // social accounts
-<<<<<<< HEAD
 export const twitter: string | null = getSiteConfig('twitter', null)
 export const mastodon: string | null = getSiteConfig('mastodon', null)
 export const github: string | null = getSiteConfig('github', null)
@@ -67,7 +66,7 @@ export const zhihu: string | null = getSiteConfig('zhihu', null)
 export const privacyPolicy : string | null = getSiteConfig('privacyPolicy', null)
 export const getMastodonHandle = (): string | null => {
   if (!mastodon) {
-    return
+    return null
   }
 
   // Since Mastodon is decentralized, handles include the instance domain name.
@@ -109,7 +108,7 @@ export const navigationLinks: Array<NavigationLink | undefined> = getSiteConfig(
 )
 
 export const googleAnalyticsId : string | null = getSiteConfig('googleAnalyticsId', null)
-export const disqusShortname : string | null = getSiteConfig('disqusShortname', null)
+export const disqusShortname : string = getSiteConfig('disqusShortname', '')
 
 // Optional site search
 export const isSearchEnabled: boolean = getSiteConfig('isSearchEnabled', true)

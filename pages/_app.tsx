@@ -19,6 +19,8 @@ import { useRouter } from 'next/router'
 import { posthog } from 'posthog-js'
 import * as React from 'react'
 
+import ReactGA from 'react-ga4'
+
 import { bootstrap } from '@/lib/bootstrap-client'
 import {
   fathomConfig,

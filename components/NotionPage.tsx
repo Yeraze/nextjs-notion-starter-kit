@@ -258,8 +258,6 @@ export function NotionPage({
     return <Page404 site={site} pageId={pageId} error={error} />
   }
 
-  const canonicalPageUrl =
-    !config.isDev && getCanonicalPageUrl(site, recordMap)(pageId)
   const title = getBlockTitle(block, recordMap) || site.name
 
   console.log('notion page', {
@@ -340,7 +338,7 @@ export function NotionPage({
         mapImageUrl={mapImageUrl}
         searchNotion={config.isSearchEnabled ? searchNotion : undefined}
         pageAside={pageAside}
-        pageFooter={pageId === site.rootNotionPageId ? null : (config.disqusShortname ? disqus : null)}
+        pageFooter={pageId === site.rootNotionPageId ? null : (config.disqusShortname ? disqus : "")}
         footer={footer}
       />
     </>

@@ -1,7 +1,6 @@
 import { getAllPagesInSpace, getPageProperty, uuidToId } from 'notion-utils'
 import pMemoize from 'p-memoize'
 
-import type * as types from './types'
 import * as config from './config'
 import * as types from './types'
 import { includeNotionIdInUrls } from './config'
@@ -9,7 +8,6 @@ import { getCanonicalPageId } from './get-canonical-page-id'
 import { notion } from './notion-api'
 
 const uuid = !!includeNotionIdInUrls
-const cache = new ExpiryMap(10000)
 
 export async function getSiteMap(): Promise<types.SiteMap> {
   const partialSiteMap = await getAllPages(
@@ -24,8 +22,7 @@ export async function getSiteMap(): Promise<types.SiteMap> {
 }
 
 const getAllPages = pMemoize(getAllPagesImpl, {
-  cacheKey: (...args) => JSON.stringify(args),
-  cache
+  cacheKey: (...args) => JSON.stringify(args)
 })
 
 const getPage = async (pageId: string, opts?: any) => {
